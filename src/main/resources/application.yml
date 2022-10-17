@@ -6,3 +6,6 @@ spring:
 logging:
   level:
     com.ll.exam.com.ll.exam.spring_restapi.app: debug
+custom:
+  jwt:
+    secretKey: secretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKey

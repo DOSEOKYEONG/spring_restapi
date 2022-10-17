@@ -1,10 +1,16 @@
 package com.ll.exam.spring_restapi.app.member.controller;
 
+import com.ll.exam.spring_restapi.app.base.dto.RsData;
+import com.ll.exam.spring_restapi.app.member.entity.Member;
+import com.ll.exam.spring_restapi.app.member.service.MemberService;
+import com.ll.exam.spring_restapi.app.security.jwt.JwtProvider;
+import com.ll.exam.spring_restapi.app.util.Util;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/member")
 @RequiredArgsConstructor
 public class MemberController {
+    private final MemberService memberService;
+    private final PasswordEncoder passwordEncoder;
 
     @Data
     public static class LoginDto {
@@ -28,17 +36,29 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<RsData> login(@RequestBody LoginDto loginDto) {
         if (loginDto.isNotValid()) {
-            return new ResponseEntity<>(null, null, HttpStatus.BAD_REQUEST);
+            return Util.spring.responseEntityOf(RsData.of("F-1", "로그인 정보가 올바르지 않습니다."), null);
         }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authentication", "qwe");
+        Member member = memberService.findByUsername(loginDto.getUsername()).orElse(null);
 
+        if (member == null) {
+            return Util.spring.responseEntityOf(RsData.of("F-2", "해당 회원이 존재하지 않습니다."), null);
+        }
 
-        String body = "username : %s, password : %s".formatted(loginDto.getUsername(), loginDto.getPassword());
+        if (passwordEncoder.matches(loginDto.getPassword(), member.getPassword()) == false) {
+            return Util.spring.responseEntityOf(RsData.of("F-3", "비밀번호가 올바르지 않습니다."), null);
+        }
 
-        return new ResponseEntity<>(body, headers, HttpStatus.OK);
+        String accessToken = memberService.geAccessToken(member);
+
+        return Util.spring.responseEntityOf(
+                RsData.of(
+                        "S-1",
+                        "로그인 성공, Access Token을 발급합니다.",
+                        Util.mapOf("accessToken", accessToken)),
+                Util.spring.httpHeadersOf("Authentication", accessToken)
+        );
     }
 }
