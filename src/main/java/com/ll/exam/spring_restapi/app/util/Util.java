@@ -24,6 +24,7 @@ public class Util {
             try {
                 return getObjectMapper().writeValueAsString(map);
             } catch (JsonProcessingException e) {
+                e.printStackTrace();
                 return null;
             }
         }
@@ -32,6 +33,7 @@ public class Util {
             try {
                 return getObjectMapper().readValue(jsonStr, LinkedHashMap.class);
             } catch (JsonProcessingException e) {
+                e.printStackTrace();
                 return null;
             }
         }
