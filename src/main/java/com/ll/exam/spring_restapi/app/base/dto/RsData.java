@@ -1,6 +1,7 @@
 package com.ll.exam.spring_restapi.app.base.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ll.exam.spring_restapi.app.security.entity.MemberContext;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +21,14 @@ public class RsData <T>{
     public static <T> RsData<T> of(String resultCode, String msg, T data) {
 
         return new RsData<T>(resultCode, msg, data);
+    }
+
+    public static <T> RsData<T> successOf(T data) {
+        return of("S-1", "성공", null);
+    }
+
+    public static <T> RsData<T> failOf(T data) {
+        return of("F-1", "실패", null);
     }
 
     public boolean isSuccess() {

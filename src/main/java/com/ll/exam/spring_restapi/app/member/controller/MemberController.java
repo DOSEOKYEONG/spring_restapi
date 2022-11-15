@@ -1,6 +1,7 @@
 package com.ll.exam.spring_restapi.app.member.controller;
 
 import com.ll.exam.spring_restapi.app.base.dto.RsData;
+import com.ll.exam.spring_restapi.app.member.dto.request.LoginDto;
 import com.ll.exam.spring_restapi.app.member.entity.Member;
 import com.ll.exam.spring_restapi.app.member.service.MemberService;
 import com.ll.exam.spring_restapi.app.security.entity.MemberContext;
@@ -24,19 +25,18 @@ public class MemberController {
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
 
-    @Data
-    public static class LoginDto {
-        private String username;
-        private String password;
-
-        public boolean isNotValid() {
-            return username == null || password == null || username.trim().length() == 0 | username.trim().length() == 0;
-        }
-    }
-
     @GetMapping("/test")
     public String test(@AuthenticationPrincipal MemberContext memberContext){
         return "안녕";
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<RsData> me(@AuthenticationPrincipal MemberContext memberContext){
+        if (memberContext == null) {
+            return Util.spring.responseEntityOf(RsData.failOf(null));
+        }
+
+        return Util.spring.responseEntityOf(RsData.successOf(memberContext));
     }
 
     @PostMapping("/login")
