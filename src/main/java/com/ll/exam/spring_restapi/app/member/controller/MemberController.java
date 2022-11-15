@@ -3,6 +3,7 @@ package com.ll.exam.spring_restapi.app.member.controller;
 import com.ll.exam.spring_restapi.app.base.dto.RsData;
 import com.ll.exam.spring_restapi.app.member.entity.Member;
 import com.ll.exam.spring_restapi.app.member.service.MemberService;
+import com.ll.exam.spring_restapi.app.security.entity.MemberContext;
 import com.ll.exam.spring_restapi.app.security.jwt.JwtProvider;
 import com.ll.exam.spring_restapi.app.util.Util;
 import lombok.Data;
@@ -10,11 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -33,6 +32,11 @@ public class MemberController {
         public boolean isNotValid() {
             return username == null || password == null || username.trim().length() == 0 | username.trim().length() == 0;
         }
+    }
+
+    @GetMapping("/test")
+    public String test(@AuthenticationPrincipal MemberContext memberContext){
+        return "안녕";
     }
 
     @PostMapping("/login")
