@@ -5,6 +5,8 @@ import com.ll.exam.spring_restapi.app.member.repository.MemberRepository;
 import com.ll.exam.spring_restapi.app.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.Optional;
 
@@ -30,7 +32,19 @@ public class MemberService {
         return memberRepository.findByUsername(username);
     }
 
+    @Transactional
     public String geAccessToken(Member member) {
-        return jwtProvider.generateAccessToken(member.getAccessTokenClaims(), 60 * 60 * 24 * 90);
+        String accessToken = member.getAccessToken();
+
+        if (StringUtils.hasLength(accessToken) == false) {
+            accessToken = jwtProvider.generateAccessToken(member.getAccessTokenClaims(), 60L * 60 * 24 * 365 * 10);
+            member.setAccessToken(accessToken);
+        }
+
+        return accessToken;
+    }
+
+    public boolean verifyWithWhiteList(Member member, String token) {
+        return member.getAccessToken().equals(token);
     }
 }
