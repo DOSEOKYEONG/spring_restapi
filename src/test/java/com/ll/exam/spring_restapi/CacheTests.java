@@ -1,6 +1,7 @@
 package com.ll.exam.spring_restapi;
 
 
+import com.ll.exam.spring_restapi.app.cache.CacheService;
 import com.ll.exam.spring_restapi.app.member.service.MemberService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,15 +19,18 @@ class CacheTests {
     @Autowired
     private MemberService memberService;
 
+    @Autowired
+    private CacheService cacheService;
+
     @Test
     @DisplayName("캐시 사용")
     void t1() throws Exception {
-        int rs = memberService.getCachedInt();
+        int rs = cacheService.getCachedInt();
 
         assertThat(rs).isGreaterThan(0);
         System.out.println(rs);
 
-        rs = memberService.getCachedInt();
+        rs = cacheService.getCachedInt();
 
         assertThat(rs).isGreaterThan(0);
         System.out.println(rs);
@@ -35,30 +39,43 @@ class CacheTests {
     @Test
     @DisplayName("캐시 삭제")
     void t2() throws Exception {
-        int rs = memberService.getCachedInt();
+        int rs = cacheService.getCachedInt();
         System.out.println(rs);
 
-        rs = memberService.getCachedInt();
+        rs = cacheService.getCachedInt();
         System.out.println(rs);
 
-        memberService.deleteCacheKey1();
+        cacheService.deleteCacheKey1();
 
-        rs = memberService.getCachedInt();
+        rs = cacheService.getCachedInt();
         System.out.println(rs);
     }
 
     @Test
     @DisplayName("캐시 수정")
     void t3() throws Exception {
-        int rs = memberService.getCachedInt();
+        int rs = cacheService.getCachedInt();
         System.out.println(rs);
 
-        rs = memberService.getCachedInt();
+        rs = cacheService.getCachedInt();
         System.out.println(rs);
 
-        memberService.putCacheKey1();
+        cacheService.putCacheKey1();
 
-        rs = memberService.getCachedInt();
+        rs = cacheService.getCachedInt();
+        System.out.println(rs);
+    }
+
+    @Test
+    @DisplayName("더하기 캐시")
+    void t4() throws Exception {
+        int rs = cacheService.plus(10, 20);
+        System.out.println(rs);
+
+        rs = cacheService.plus(5, 2);
+        System.out.println(rs);
+
+        rs = cacheService.plus(10, 20);
         System.out.println(rs);
     }
 }
