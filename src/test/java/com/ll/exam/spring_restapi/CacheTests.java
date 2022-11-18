@@ -1,6 +1,7 @@
 package com.ll.exam.spring_restapi;
 
 
+import com.ll.exam.spring_restapi.app.base.dto.Person;
 import com.ll.exam.spring_restapi.app.cache.CacheService;
 import com.ll.exam.spring_restapi.app.member.service.MemberService;
 import org.junit.jupiter.api.DisplayName;
@@ -77,5 +78,20 @@ class CacheTests {
 
         rs = cacheService.plus(10, 20);
         System.out.println(rs);
+    }
+
+    @Test
+    @DisplayName("래퍼런스 매개변수")
+    void t5() throws Exception {
+        Person p1 = new Person(1, "홍길동1");
+        Person p2 = new Person(1, "홍길동2");
+
+        System.out.println(p1.equals(p2));
+
+        String personName = cacheService.getName(p1, 5);
+        System.out.println(personName);
+
+        personName = cacheService.getName(p2, 10);
+        System.out.println(personName);
     }
 }

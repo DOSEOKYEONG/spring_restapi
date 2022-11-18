@@ -1,5 +1,6 @@
 package com.ll.exam.spring_restapi.app.cache;
 
+import com.ll.exam.spring_restapi.app.base.dto.Person;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -26,5 +27,10 @@ public class CacheService {
     @Cacheable("plus")
     public int plus(int a, int b) {
         return a + b;
+    }
+
+    @Cacheable(value = "getName", key = "#person.id")
+    public String getName(Person person, int i) {
+        return person.getName();
     }
 }
