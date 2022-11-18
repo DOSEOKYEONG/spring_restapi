@@ -38,11 +38,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 Member member = memberService.findByUsername((String) claims.get("username")).get();
 
                 // 2차 체크(화이트리스트에 포함되는지)
-                if ( memberService.verifyWithWhiteList(member, token) ) {
+                if (memberService.verifyWithWhiteList(member, token)) {
                     forceAuthentication(member);
                 }
+            }
+            filterChain.doFilter(request, response);
         }
-        filterChain.doFilter(request, response);
     }
 
     private void forceAuthentication(Member member) {
