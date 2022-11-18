@@ -1,5 +1,6 @@
 package com.ll.exam.spring_restapi.app.member.service;
 
+import com.ll.exam.spring_restapi.app.AppConfig;
 import com.ll.exam.spring_restapi.app.member.entity.Member;
 import com.ll.exam.spring_restapi.app.member.repository.MemberRepository;
 import com.ll.exam.spring_restapi.app.security.jwt.JwtProvider;
@@ -54,8 +55,19 @@ public class MemberService {
         return member.getAccessToken().equals(token);
     }
 
-    @Cacheable("member")
+
     public Member getByUsername__cached(String username) {
-        return findByUsername(username).orElse(null);
+        MemberService thisObj = (MemberService) AppConfig.getContext().getBean("memberService");
+        Map<String, Object> memberMap = thisObj.getMemberMapByUsername__cached(username);
+
+        return Member.fromMap(memberMap);
     }
+
+    @Cacheable("member")
+    public Map<String, Object> getMemberMapByUsername__cached(String username) {
+        Member member = findByUsername(username).orElse(null);
+
+        return member.toMap();
+    }
+
 }
